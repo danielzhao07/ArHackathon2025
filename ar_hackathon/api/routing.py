@@ -5,8 +5,8 @@ This module defines the routing API for the Amazon Robotics Hackathon.
 Students will implement the route_package function in this module.
 
 *****IMPORTANT*****
-Team name: OpenAI AutoCoder
-Email address: autocoder@example.com
+Team name: Daniel Zhao
+Email address: d96zhao@uwaterloo.ca
 *******************
 """
 
