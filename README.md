@@ -6,6 +6,30 @@ This package contains the code for the Amazon Robotics Hackathon, a coding compe
 
 In this hackathon, students will implement an algorithm to route packages through a network of fulfillment centers (FCs). The goal is to deliver packages from their source FC to their destination FC as efficiently as possible.
 
+## Performance: per-timestep caching benchmark
+
+`benchmark_caching.py` measures how much redundant graph recomputation the per-timestep
+cache in `ar_hackathon/api/routing.py` eliminates. It runs all 7 provided test cases twice:
+once with the cache as written (adjacency lists and congestion estimates rebuilt only when
+the timestep changes) and once with a naive baseline that rebuilds them on every
+`route_package()` call. The bandwidth-reservation ledger is preserved in both modes so the
+comparison isolates the cache itself.
+
+Results across all 7 test cases (timings vary by machine; rebuild counts are deterministic):
+
+| Metric | Cached | No-cache baseline |
+|---|---|---|
+| Full graph rebuilds | 271 | 5,797 (**95.3% eliminated**) |
+| Routing compute time | 0.17 s | 0.44 s (**~61% faster**) |
+| Total score | 628.7 | 627.0 |
+
+Reproduce with:
+
+```bash
+pip install -e .
+python3 benchmark_caching.py
+```
+
 ## Project Structure
 
 ```
@@ -167,27 +191,3 @@ The final score will be the sum of the scores from each test case.
 
 ## Submission
 Update the `team.json` file to contain your or your team's name and then run `python submit.py` to submit your implementation.
-
-## Performance: per-timestep caching benchmark
-
-`benchmark_caching.py` measures how much redundant graph recomputation the per-timestep
-cache in `ar_hackathon/api/routing.py` eliminates. It runs all 7 provided test cases twice:
-once with the cache as written (adjacency lists and congestion estimates rebuilt only when
-the timestep changes) and once with a naive baseline that rebuilds them on every
-`route_package()` call. The bandwidth-reservation ledger is preserved in both modes so the
-comparison isolates the cache itself.
-
-Results across all 7 test cases (timings vary by machine; rebuild counts are deterministic):
-
-| Metric | Cached | No-cache baseline |
-|---|---|---|
-| Full graph rebuilds | 271 | 5,797 (**95.3% eliminated**) |
-| Routing compute time | 0.17 s | 0.44 s (**~61% faster**) |
-| Total score | 628.7 | 627.0 |
-
-Reproduce with:
-
-```bash
-pip install -e .
-python3 benchmark_caching.py
-```
